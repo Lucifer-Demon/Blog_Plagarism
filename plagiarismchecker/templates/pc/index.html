@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plagiarism Detection System</title>
+    <style>
+    /* Match doc_compare look */
+        body {
+            background:
+        linear-gradient(135deg, rgba(168, 218, 220, 0.8), rgba(69, 123, 157, 0.8)),
+        linear-gradient(45deg, #1d3557 25%, transparent 25%, transparent 75%, #1d3557 75%, #1d3557),
+        linear-gradient(-45deg, #457b9d 25%, transparent 25%, transparent 75%, #457b9d 75%, #457b9d);
+      background-size: cover, 40px 40px, 40px 40px;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .container-box {
+      background-color: #fff;
+            border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      padding: 48px; max-width: 1200px; width: 100%;
+    }
+    h1 { color: #1d3557; font-size: 2.8em; font-weight: 800; margin-bottom: 24px; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.06); }
+    .form-control { width: 100%; border: 1px solid #c0d0e0; border-radius: 8px; padding: 12px 15px; font-size: 1.05em; }
+    .form-control:focus { border-color: #457b9d; box-shadow: 0 0 0 0.25rem rgba(69,123,157,.25); outline: none; }
+    .btn { border-radius: 12px; padding: 14px 24px; font-weight: 700; font-size: 1.1em; transition: all .25s ease; }
+    .btn-primary { background-color: #2a9d8f; border-color: #2a9d8f; color:#fff; }
+    .btn-primary:hover { background-color: #264653; border-color: #264653; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,.12); }
+    .btn-warning { background-color: #fca311; border-color: #fca311; color: #1d3557; }
+    .btn-warning:hover { background-color: #e63946; border-color: #e63946; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,.12); }
+    .btn-outline-secondary { border: 2px solid #457b9d; color: #457b9d; }
+    .btn-outline-secondary:hover { background:#457b9d; color:#fff; border-color:#457b9d; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,.1); }
+    .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,.1); transition: transform .3s ease, box-shadow .3s ease; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+    .card-body { padding: 36px; }
+    .alert { border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,.08); }
+    .alert-info { background-color: #e3f2fd; border-color: #90caf9; color: #0d47a1; }
+    .panel { background-color: #eef6ff; border: 1px solid #cfe0ff; padding: 16px; border-radius: 12px; }
+    .helper { color: #6b7280; font-size: .95em; }
+    .text-input { min-height: 300px; resize: vertical; }
+    .actions-row { display:flex; flex-wrap:wrap; gap:12px; justify-content: space-between; align-items:center; }
+    .nav-row { display:flex; flex-wrap:wrap; gap:12px; justify-content: center; margin-top: 32px; }
+    </style>
+</head>
+<body>
+  <div class="container-box">
+    <h1>Plagiarism Detection System</h1>
+
+    {% if error %}
+      <div class="banner" style="background:#fdeaea;border-color:#f5c2c2;color:#7a1d1d;">{{ error }}</div>
+    {% endif %}
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+      <form id="checkerForm" method="post" action="{% url 'detect' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" id="actionField" name="action" value="check_text" />
+        <div class="mb-3">
+          <textarea class="form-control text-input" rows="14" name="q" placeholder="Please enter your text and press Check Plagiarism">{{ q_text_input|default:"" }}</textarea>
+        </div>
+        <div class="mb-3">
+          <input id="docfile" name="docfile" type="file" class="form-control" />
+          <small class="helper" id="fileName">No file chosen</small>
+        </div>
+        <div class="actions-row">
+          <button type="submit" class="btn btn-primary" onclick="setAction('check_file'); return true;">Check File</button>
+          <button type="submit" class="btn btn-primary" onclick="setAction('check_text'); return true;">Check Plagiarism</button>
+          <button type="submit" class="btn btn-primary" onclick="setAction('check_web'); return true;">Check Web</button>
+          <button type="submit" class="btn btn-warning" onclick="setAction('download_pdf'); return true;" name="download_pdf" value="1">Download PDF Report</button>
+          <button type="submit" class="btn btn-outline-secondary" onclick="setAction('clear_session'); return true;">Clear Results</button>
+            </div>
+        <div class="nav-row">
+          <a href="{% url 'home' %}" class="btn btn-outline-secondary">Back to Home</a>
+          <a href="{% url 'compare' %}" class="btn btn-outline-secondary">Compare Documents</a>
+        </div>
+    </form>
+      </div>
+    </div>
+
+    {% if percent or total_words or plag_words %}
+      <div class="alert alert-info mt-3">
+        {% if percent is not None %}<div><strong>Overall Similarity:</strong> {{ percent }}%</div>{% endif %}
+        {% if total_words is not None %}<div><strong>Total Words:</strong> {{ total_words }}</div>{% endif %}
+        {% if plag_words is not None %}<div><strong>Plagiarized Words:</strong> {{ plag_words }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if web_results and web_results.output %}
+      <div class="panel">
+        <div class="metric" style="margin-bottom:6px;">Web Matches</div>
+        <ul style="margin:0 0 0 18px;">
+          {% for link, data in web_results.output.items %}
+            <li><a href="{{ link }}" target="_blank">{{ data.title }}</a> — {{ data.snippet }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if plagiarism_sources %}
+      <div class="card mt-4">
+        <div class="card-body">
+          <h3 style="color: #e63946; margin-bottom: 20px;">
+            <i class="fas fa-exclamation-triangle"></i> Plagiarism Sources Detected
+          </h3>
+          <p class="text-muted mb-3">Found {{ plagiarism_sources|length }} source(s) with matching content:</p>
+          
+          {% for source in plagiarism_sources %}
+            <div class="alert alert-warning mb-3" style="border-left: 4px solid #e63946;">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="mb-1" style="color: #e63946;">
+                  <strong>{{ source.source_title }}</strong>
+                  {% if source.source_author %}
+                    <small class="text-muted">by {{ source.source_author }}</small>
+                  {% endif %}
+                </h5>
+                <span class="badge bg-danger">{{ source.similarity_percentage }}% match</span>
+              </div>
+              
+              {% if source.matching_segments %}
+                <div class="mt-3">
+                  <h6 style="color: #6c757d;">Matching Text Segments:</h6>
+                  {% for segment in source.matching_segments %}
+                    <div class="card mb-2" style="background-color: #fff3cd; border: 1px solid #ffeaa7;">
+                      <div class="card-body p-3">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <h6 class="text-danger mb-2">Your Text:</h6>
+                            <p class="mb-0" style="background-color: #ffebee; padding: 8px; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                              "{{ segment.user_text }}"
+                            </p>
+                          </div>
+                          <div class="col-md-6">
+                            <h6 class="text-primary mb-2">Source Text:</h6>
+                            <p class="mb-0" style="background-color: #e3f2fd; padding: 8px; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                              "{{ segment.source_text }}"
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          
+          <div class="alert alert-info mt-3">
+            <strong>Recommendation:</strong> Please review the highlighted text segments and ensure proper citation or rewrite the content to avoid plagiarism.
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    </div>
+<script>
+    function setAction(a) { 
+      console.log('Setting action to:', a);
+      document.getElementById('actionField').value = a; 
+      
+      // Validate based on action
+      if (a === 'check_file') {
+        var fileInput = document.getElementById('docfile');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          alert('Please select a file to check for plagiarism!');
+          return false;
+        }
+        
+        // Check file type
+        var fileName = fileInput.files[0].name;
+        var allowedExtensions = ['txt', 'pdf', 'docx'];
+        var fileExtension = fileName.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+          alert('Please upload a .txt, .pdf, or .docx file only!');
+          return false;
+        }
+      } else if (a === 'check_text' || a === 'check_web') {
+        var textInput = document.querySelector('textarea[name="q"]');
+        if (!textInput.value.trim()) {
+          alert('Please enter some text to check for plagiarism!');
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    (function(){
+      var f = document.getElementById('docfile');
+      if (f) {
+        f.addEventListener('change', function(){
+          var name = (this.files && this.files.length) ? this.files[0].name : 'No file chosen';
+          var el = document.getElementById('fileName');
+          if (el) el.textContent = name;
+          
+          // Show file size
+          if (this.files && this.files.length > 0) {
+            var size = (this.files[0].size / 1024 / 1024).toFixed(2);
+            el.textContent = name + ' (' + size + ' MB)';
+          }
+        });
+      }
+    })();
+</script>
+</body>
+</html>

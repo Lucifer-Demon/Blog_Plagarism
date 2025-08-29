@@ -1,0 +1,336 @@
+{% extends 'pc/base.html' %}
+{% block content %}
+<style>
+  body {
+    background:
+      linear-gradient(135deg, rgba(168, 218, 220, 0.8), rgba(69, 123, 157, 0.8)),
+      linear-gradient(45deg, #1d3557 25%, transparent 25%, transparent 75%, #1d3557 75%, #1d3557),
+      linear-gradient(-45deg, #457b9d 25%, transparent 25%, transparent 75%, #457b9d 75%, #457b9d);
+    background-size: cover, 40px 40px, 40px 40px;
+    background-attachment: fixed;
+    animation: moveBackground 60s linear infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  @keyframes moveBackground {
+    0% { background-position: 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 40px 40px, -40px 40px; }
+  }
+  
+  .my-posts-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .my-posts-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .my-posts-title {
+    background: linear-gradient(135deg, #1d3557, #457b9d, #2a9d8f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 3em;
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+  
+  .my-posts-subtitle {
+    color: #4a5568;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+  }
+  
+  .btn-modern {
+    background: linear-gradient(135deg, #2a9d8f, #457b9d);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 700;
+    font-size: 1.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(42, 157, 143, 0.3);
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+  }
+  
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+  
+  .btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+  }
+  
+  .btn-danger {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+  }
+  
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+  
+  .post-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  }
+  
+  .post-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+  }
+  
+  .post-content {
+    padding: 25px;
+  }
+  
+  .post-title {
+    color: #1d3557;
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  
+  .post-title:hover {
+    color: #2a9d8f;
+  }
+  
+  .post-excerpt {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #718096;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .status-draft {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+  }
+  
+  .status-pending {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+  }
+  
+  .status-published {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+  }
+  
+  .status-rejected {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: white;
+  }
+  
+  .post-stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    color: #718096;
+    font-size: 0.9em;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-small {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    border-radius: 8px;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #4a5568;
+  }
+  
+  @media (max-width: 768px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .my-posts-title {
+      font-size: 2.5em;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="my-posts-container">
+  <!-- Header Section -->
+  <div class="my-posts-header">
+    <h1 class="my-posts-title">📋 My Blog Posts</h1>
+    <p class="my-posts-subtitle">Manage and track all your blog posts</p>
+    
+    <!-- Action Buttons -->
+    <div style="margin-top: 20px;">
+      <a href="{% url 'blog_create' %}" class="btn-modern">✍️ Write New Post</a>
+      <a href="{% url 'blog_list' %}" class="btn-modern">📝 View All Posts</a>
+    </div>
+  </div>
+
+  <!-- Posts Grid -->
+  {% if posts_with_info %}
+    <div class="posts-grid">
+      {% for item in posts_with_info %}
+      {% with post=item.post %}
+        <article class="post-card">
+          {% if post.featured_image %}
+            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="post-image">
+          {% else %}
+            <div class="post-image"></div>
+          {% endif %}
+          
+          <div class="post-content">
+            <h2 class="post-title">
+              <a href="{% url 'blog_detail' post.slug %}" style="text-decoration: none; color: inherit;">
+                {{ post.title }}
+              </a>
+            </h2>
+            
+            {% if post.excerpt %}
+              <p class="post-excerpt">{{ post.excerpt }}</p>
+            {% else %}
+              <p class="post-excerpt">{{ post.content|striptags|truncatewords:25 }}</p>
+            {% endif %}
+            
+            <div class="post-meta">
+              <div>
+                📅 {{ post.created_at|date:"M d, Y" }}
+              </div>
+              <span class="status-badge status-{{ post.status }}">
+                {{ post.get_status_display }}
+              </span>
+            </div>
+            
+            <div class="post-stats">
+              <span>👁️ {{ post.views }} views</span>
+              <span>💬 {{ post.comments.count }} comments</span>
+              {% if post.category %}
+                <span>🏷️ {{ post.category.name }}</span>
+              {% endif %}
+            </div>
+
+            {% if item.max_similarity > 0 %}
+            <div class="plagiarism-info" style="margin-top: 15px; padding: 10px; border-radius: 8px; background: #fffbe6; border: 1px solid #fde68a;">
+                <p style="margin: 0; font-weight: bold; color: #c2410c;">
+                    🚨 Plagiarism Alert: {{ item.max_similarity }}% similar
+                </p>
+                {% if item.most_similar_post %}
+                <p style="margin: 5px 0 0; font-size: 0.9em; color: #718096;">
+                    Source: "{{ item.most_similar_post.title }}" by {{ item.most_similar_post.author.username }}
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="action-buttons" style="margin-top: 15px;">
+              {% if post.status == 'draft' %}
+                <a href="{% url 'blog_edit' post.slug %}" class="btn-modern btn-small">
+                  ✏️ Edit
+                </a>
+                <a href="{% url 'blog_detail' post.slug %}" class="btn-modern btn-small">
+                  👁️ Preview
+                </a>
+              {% elif post.status == 'pending' %}
+                <a href="{% url 'blog_edit' post.slug %}" class="btn-modern btn-small">
+                  ✏️ Edit
+                </a>
+                <span style="color: #f59e0b; font-size: 0.9em;">⏳ Under Review</span>
+              {% elif post.status == 'published' %}
+                <a href="{% url 'blog_detail' post.slug %}" class="btn-modern btn-small">
+                  👁️ View
+                </a>
+                <a href="{% url 'blog_edit' post.slug %}" class="btn-modern btn-small">
+                  ✏️ Edit
+                </a>
+              {% elif post.status == 'rejected' %}
+                <a href="{% url 'blog_edit' post.slug %}" class="btn-modern btn-small">
+                  ✏️ Edit & Resubmit
+                </a>
+                <span style="color: #e53e3e; font-size: 0.9em;">❌ Rejected</span>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      {% endwith %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <h3>No blog posts yet</h3>
+      <p>You haven't created any blog posts yet. Start sharing your thoughts with the community!</p>
+      <a href="{% url 'blog_create' %}" class="btn-modern">✍️ Write Your First Post</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

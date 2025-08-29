@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Introduction to Machine Learning",
+    "content": "Machine learning is a subset of artificial intelligence that focuses on algorithms and statistical models that computer systems use to perform tasks without explicit instructions. It relies on patterns and inference instead of traditional programming approaches.",
+    "source": "academic_sample",
+    "type": "original"
+  },
+  {
+    "title": "Data Structures and Algorithms",
+    "content": "Data structures are ways of organizing and storing data in a computer so that it can be accessed and modified efficiently. Common data structures include arrays, linked lists, stacks, queues, trees, and graphs. Each has specific use cases and performance characteristics.",
+    "source": "academic_sample",
+    "type": "original"
+  },
+  {
+    "title": "Software Engineering Principles",
+    "content": "Software engineering is the systematic application of engineering approaches to the development of software. It involves requirements analysis, design, implementation, testing, and maintenance of software systems using structured methodologies.",
+    "source": "academic_sample",
+    "type": "original"
+  }
+]

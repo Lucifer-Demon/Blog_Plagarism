@@ -1,0 +1,201 @@
+{% extends 'pc/base.html' %}
+{% block content %}
+<style>
+  body {
+    background:
+      linear-gradient(135deg, rgba(168, 218, 220, 0.8), rgba(69, 123, 157, 0.8)),
+      linear-gradient(45deg, #1d3557 25%, transparent 25%, transparent 75%, #1d3557 75%, #1d3557),
+      linear-gradient(-45deg, #457b9d 25%, transparent 25%, transparent 75%, #457b9d 75%, #457b9d);
+    background-size: cover, 40px 40px, 40px 40px;
+    background-attachment: fixed;
+    animation: moveBackground 60s linear infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  @keyframes moveBackground {
+    0% { background-position: 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 40px 40px, -40px 40px; }
+  }
+  
+  .delete-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .delete-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .delete-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+  }
+  
+  .delete-title {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.5em;
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+  
+  .delete-subtitle {
+    color: #4a5568;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+  }
+  
+  .post-info {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-left: 4px solid #e53e3e;
+  }
+  
+  .post-title {
+    color: #1d3557;
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .post-meta {
+    color: #718096;
+    font-size: 1em;
+    margin-bottom: 15px;
+  }
+  
+  .post-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    color: #4a5568;
+    font-size: 0.9em;
+  }
+  
+  .warning-text {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1));
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    color: #92400e;
+    font-weight: 600;
+  }
+  
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 15px 30px;
+    font-weight: 700;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 10px;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-danger {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: white;
+  }
+  
+  .btn-danger:hover {
+    background: linear-gradient(135deg, #c53030, #9b2c2c);
+  }
+  
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1d3557;
+    border: 2px solid #e2e8f0;
+  }
+  
+  .btn-secondary:hover {
+    background: #1d3557;
+    color: white;
+    border-color: #1d3557;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  @media (max-width: 768px) {
+    .delete-title {
+      font-size: 2em;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .post-stats {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+</style>
+
+<div class="delete-container">
+  <div class="delete-card">
+    <div class="delete-icon">⚠️</div>
+    
+    <h1 class="delete-title">Delete Blog Post</h1>
+    <p class="delete-subtitle">Are you sure you want to delete this blog post?</p>
+    
+    <!-- Post Information -->
+    <div class="post-info">
+      <div class="post-title">{{ post.title }}</div>
+      <div class="post-meta">
+        👤 {{ post.author.username }} • 📅 {{ post.created_at|date:"M d, Y" }}
+      </div>
+      <div class="post-stats">
+        <span>👁️ {{ post.views }} views</span>
+        <span>💬 {{ post.comments.count }} comments</span>
+        <span>📊 {{ post.get_status_display }}</span>
+      </div>
+    </div>
+    
+    <!-- Warning -->
+    <div class="warning-text">
+      ⚠️ This action cannot be undone. The post and all its comments will be permanently deleted.
+    </div>
+    
+    <!-- Action Buttons -->
+    <form method="POST" style="display: inline;">
+      {% csrf_token %}
+      <div class="action-buttons">
+        <button type="submit" class="btn btn-danger">
+          🗑️ Yes, Delete Post
+        </button>
+        <a href="{% url 'blog_admin' %}" class="btn btn-secondary">
+          ❌ Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

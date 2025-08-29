@@ -1,0 +1,456 @@
+{% extends 'pc/base.html' %}
+{% block content %}
+<style>
+  body {
+    background:
+      linear-gradient(135deg, rgba(168, 218, 220, 0.8), rgba(69, 123, 157, 0.8)),
+      linear-gradient(45deg, #1d3557 25%, transparent 25%, transparent 75%, #1d3557 75%, #1d3557),
+      linear-gradient(-45deg, #457b9d 25%, transparent 25%, transparent 75%, #457b9d 75%, #457b9d);
+    background-size: cover, 40px 40px, 40px 40px;
+    background-attachment: fixed;
+    animation: moveBackground 60s linear infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  @keyframes moveBackground {
+    0% { background-position: 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 40px 40px, -40px 40px; }
+  }
+  
+  .compare-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .compare-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .compare-title {
+    background: linear-gradient(135deg, #1d3557, #457b9d, #2a9d8f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 3em;
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+  
+  .compare-subtitle {
+    color: #4a5568;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+  }
+  
+  .form-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-label {
+    display: block;
+    color: #1d3557;
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  
+  .form-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.05em;
+    font-family: inherit;
+    resize: vertical;
+    background: white;
+  }
+  
+  .form-textarea:focus {
+    outline: none;
+    border-color: #2a9d8f;
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+  }
+  
+  .form-select {
+    padding: 12px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.05em;
+    background: white;
+    cursor: pointer;
+  }
+  
+  .form-select:focus {
+    outline: none;
+    border-color: #2a9d8f;
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+  }
+  
+  .btn-modern {
+    background: linear-gradient(135deg, #2a9d8f, #457b9d);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 15px 30px;
+    font-weight: 700;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(42, 157, 143, 0.3);
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+  }
+  
+  .results-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+  }
+  
+  .results-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .results-title {
+    color: #1d3557;
+    font-size: 2em;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  
+  .results-summary {
+    color: #4a5568;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+  }
+  
+  .result-card {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2a9d8f;
+    transition: all 0.3s ease;
+  }
+  
+  .result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .result-title {
+    color: #1d3557;
+    font-size: 1.3em;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  
+  .result-title:hover {
+    color: #2a9d8f;
+  }
+  
+  .similarity-badge {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 1.1em;
+  }
+  
+  .similarity-low {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+  }
+  
+  .similarity-medium {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+  }
+  
+  .similarity-high {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+  }
+  
+  .result-meta {
+    color: #718096;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+  }
+  
+  .result-excerpt {
+    color: #4a5568;
+    line-height: 1.6;
+    font-size: 1em;
+  }
+  
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+  }
+  
+  .no-results h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #4a5568;
+  }
+  
+  .algorithm-info {
+    background: linear-gradient(135deg, rgba(42, 157, 143, 0.1), rgba(69, 123, 157, 0.1));
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(42, 157, 143, 0.2);
+  }
+  
+  .algorithm-info h4 {
+    color: #1d3557;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .algorithm-info p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .compare-title {
+      font-size: 2.5em;
+    }
+    
+    .result-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+</style>
+
+<div class="compare-container">
+  <!-- Header Section -->
+  <div class="compare-header">
+    <!-- User Info -->
+    <div style="text-align: center; margin-bottom: 20px; padding: 0 10px;">
+      <div style="color: #2a9d8f; font-weight: 600; font-size: 1.1em;">
+        👤 Welcome, {{ user.username }}!
+      </div>
+    </div>
+    
+    <h1 class="compare-title">🔍 Blog Post Comparison</h1>
+    <p class="compare-subtitle">Check your content against existing blog posts using advanced plagiarism detection algorithms</p>
+    
+    <!-- Action Buttons -->
+    <div style="margin-top: 20px;">
+      <a href="{% url 'blog_list' %}" class="btn-modern">📝 Back to Blog</a>
+      <a href="{% url 'blog_create' %}" class="btn-modern">✍️ Write New Post</a>
+    </div>
+  </div>
+
+  <!-- Input Form -->
+  <div class="form-section">
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="text_to_check" class="form-label">Text to Check:</label>
+        <textarea 
+          id="text_to_check" 
+          name="text_to_check" 
+          class="form-textarea" 
+          placeholder="Enter the text you want to check against existing blog posts..."
+          required
+        >{{ text_to_check|default:'' }}</textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="algorithm" class="form-label">Detection Algorithm:</label>
+        <select id="algorithm" name="algorithm" class="form-select">
+          <option value="cosine" {% if algorithm == 'cosine' %}selected{% endif %}>Cosine Similarity (TF-IDF)</option>
+          <option value="containment" {% if algorithm == 'containment' %}selected{% endif %}>Containment Similarity</option>
+        </select>
+      </div>
+      
+      <div class="algorithm-info">
+        <h4>📊 Algorithm Information:</h4>
+        <p><strong>Cosine Similarity:</strong> Compares word frequency patterns using TF-IDF vectors. Best for detecting similar writing styles and content themes.</p>
+        <p><strong>Containment Similarity:</strong> Detects exact or near-exact text matches using character n-grams. Best for finding copied or paraphrased content.</p>
+      </div>
+      
+      <div style="text-align: center;">
+        <button type="submit" class="btn-modern">🔍 Check for Similarities</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Section -->
+  {% if comparison_results %}
+    <div class="results-section">
+      <div class="results-header">
+        <h2 class="results-title">Comparison Results</h2>
+        <p class="results-summary">
+          Checked against {{ total_posts_checked }} published blog posts. 
+          Found {{ posts_with_similarity }} posts with similarity > 5%.
+        </p>
+      </div>
+      
+      {% for result in comparison_results %}
+        <div class="result-card">
+          <div class="result-header">
+            <a href="{% url 'blog_detail' result.post.slug %}" class="result-title">
+              {{ result.post.title }}
+            </a>
+            <span class="similarity-badge 
+              {% if result.similarity_percentage < 20 %}similarity-low
+              {% elif result.similarity_percentage < 50 %}similarity-medium
+              {% else %}similarity-high{% endif %}">
+              {{ result.similarity_percentage }}% Similar
+            </span>
+          </div>
+          
+          <div class="result-meta">
+            👤 {{ result.post.author.username }} • 
+            📅 {{ result.post.published_at|date:"M d, Y" }} • 
+            🔧 Algorithm: {{ result.algorithm_used|title }}
+          </div>
+          
+          <div class="result-excerpt">
+            {{ result.post.content|truncatewords:50 }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% elif text_to_check %}
+    <div class="no-results">
+      <h3>No Similar Content Found</h3>
+      <p>Your text doesn't show significant similarity (>5%) with any existing blog posts. This suggests your content is original!</p>
+      <p><strong>Posts checked:</strong> {{ total_posts_checked }}</p>
+    </div>
+  {% endif %}
+
+  <!-- Debug Information -->
+  {% if debug_info %}
+    <div class="results-section" style="background: rgba(255, 255, 255, 0.9); border-left: 4px solid #f39c12;">
+      <h3 style="color: #f39c12;">🔧 Debug Information</h3>
+      <p><strong>Total Published Posts:</strong> {{ debug_info.total_posts }}</p>
+      <p><strong>Posts with Content:</strong> {{ debug_info.posts_with_content }}</p>
+      <p><strong>Comparisons Made:</strong> {{ debug_info.comparisons_made }}</p>
+      <p><strong>Similarities Found (>1%):</strong> {{ debug_info.similarities_found }}</p>
+      <p><strong>Posts with Similar Content:</strong> {{ existing_posts_similarities|length }}</p>
+    </div>
+  {% endif %}
+
+  <!-- Existing Blog Posts Similarities -->
+  {% if existing_posts_similarities %}
+    <div class="results-section">
+      <div class="results-header">
+        <h2 class="results-title">📊 Existing Blog Posts Similarities</h2>
+        <p class="results-summary">
+          Pre-computed similarities between existing blog posts (automatically detected)
+        </p>
+      </div>
+      
+      {% for post_group in existing_posts_similarities %}
+        <div class="result-card" style="border-left-color: #457b9d;">
+          <div class="result-header">
+            <a href="{% url 'blog_detail' post_group.current_post.slug %}" class="result-title">
+              📝 {{ post_group.current_post.title }}
+            </a>
+            <span style="background: linear-gradient(135deg, #457b9d, #1d3557); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 0.9em;">
+              {{ post_group.similarities|length }} Similar Post{{ post_group.similarities|length|pluralize }}
+            </span>
+          </div>
+          
+          <div class="result-meta">
+            👤 {{ post_group.current_post.author.username }} • 
+            📅 {{ post_group.current_post.published_at|date:"M d, Y" }}
+          </div>
+          
+          <div style="margin-top: 15px;">
+            <h4 style="color: #1d3557; font-size: 1.1em; margin-bottom: 10px;">Similar to:</h4>
+            {% for similarity in post_group.similarities %}
+              <div style="background: rgba(69, 123, 157, 0.1); border-radius: 8px; padding: 15px; margin-bottom: 10px; border-left: 3px solid #457b9d;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <a href="{% url 'blog_detail' similarity.post.slug %}" style="color: #1d3557; font-weight: 600; text-decoration: none; font-size: 1em;">
+                    {{ similarity.post.title }}
+                  </a>
+                  <span class="similarity-badge 
+                    {% if similarity.similarity_percentage < 20 %}similarity-low
+                    {% elif similarity.similarity_percentage < 50 %}similarity-medium
+                    {% else %}similarity-high{% endif %}" style="font-size: 0.85em; padding: 4px 10px;">
+                    {{ similarity.similarity_percentage }}%
+                  </span>
+                </div>
+                <div style="color: #718096; font-size: 0.85em; margin-bottom: 5px;">
+                  👤 {{ similarity.post.author.username }} • 📅 {{ similarity.post.published_at|date:"M d, Y" }}
+                </div>
+                <div style="color: #4a5568; font-size: 0.9em; line-height: 1.4;">
+                  {{ similarity.post.content|truncatewords:25 }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- No Similarities Found -->
+    <div class="results-section">
+      <div class="results-header">
+        <h2 class="results-title">📊 Existing Blog Posts Similarities</h2>
+        <p class="results-summary">
+          Pre-computed similarities between existing blog posts (automatically detected)
+        </p>
+      </div>
+      
+      <div class="no-results">
+        <h3>No Similar Posts Found</h3>
+        {% if debug_info.posts_with_content == 0 %}
+          <p>No published blog posts with content found in the database.</p>
+        {% elif debug_info.posts_with_content == 1 %}
+          <p>Only one published blog post found. Need at least 2 posts to compare similarities.</p>
+        {% else %}
+          <p>No significant similarities (>1%) found between existing blog posts.</p>
+          <p>This suggests all your blog content is original!</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

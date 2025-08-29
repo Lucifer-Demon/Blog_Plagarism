@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plagiarism Detection System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Attractive Background Gradient with subtle animation */
+            background: linear-gradient(135deg, #1A202C, #2D3748, #4A5568); /* Dark, subtle blue-grey gradient */
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: #E2E8F0; /* Light text color for the body background */
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header Styling */
+        header {
+            background: linear-gradient(to right, #1A202C, #2B6CB0); /* Darker blue to a lighter blue */
+            color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .text-2xl {
+            font-size: 1.5rem;
+        }
+
+        header .font-bold {
+            font-weight: 700;
+        }
+
+        header nav a {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: #4299E1; /* Tailwind blue-500 */
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #3182CE; /* Tailwind blue-600 */
+        }
+
+        .btn-primary-outline {
+            border: 2px solid #4299E1;
+            color: #4299E1;
+            background-color: transparent;
+        }
+
+        .btn-primary-outline:hover {
+            background-color: #4299E1;
+            color: #fff;
+        }
+
+        /* Main Content Styling */
+        main {
+            padding: 2rem 0;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 4rem 0;
+            background-color: rgba(255, 255, 255, 0.05); /* Slightly transparent white for content */
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-section .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .hero-section .btn-main {
+            background-color: #63B3ED; /* Tailwind blue-300 */
+            color: #1A202C; /* Dark text for contrast */
+            border: none;
+        }
+
+        .hero-section .btn-main:hover {
+            background-color: #4299E1; /* Darker blue on hover */
+            color: #fff;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background-color: rgba(255, 255, 255, 0.08); /* Slightly more transparent white */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-card h3 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #90CDF4; /* Lighter blue for headings */
+        }
+
+        .content-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .content-card ul li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .content-card strong {
+            font-weight: 600;
+            color: #BEE3F8; /* Even lighter blue for strong text */
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: rgba(26, 32, 44, 0.8); /* Dark background with transparency */
+            color: #A0AEC0; /* Light grey text */
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Utility classes for layout */
+        .container {
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-8 { margin-top: 2rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .p-4 { padding: 1rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .grid { display: grid; }
+        .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .gap-6 { gap: 1.5rem; }
+        .leading-relaxed { line-height: 1.625; }
+        .font-semibold { font-weight: 600; }
+        .text-white { color: #fff; }
+        .text-gray-300 { color: #CBD5E0; }
+        .text-gray-400 { color: #A0AEC0; }
+        .text-blue-200 { color: #90CDF4; }
+        .text-blue-300 { color: #63B3ED; }
+        .text-blue-400 { color: #4299E1; }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            .hero-section p {
+                font-size: 1rem;
+            }
+            header .container {
+                flex-direction: column;
+            }
+            header nav {
+                margin-top: 1rem;
+            }
+            header nav a {
+                margin: 0.5rem 0;
+            }
+            .lg\:col-span-2 {
+                grid-column: span 1 / span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <a href="{% url 'home' %}" class="text-2xl font-bold text-white">Plagiarism Detector</a>
+            <nav>
+                <a href="{% url 'detect' %}" class="btn-primary mr-2">Check Plagiarism</a>
+                     <form action="{% url 'detect' %}" method="post">
+                        <button type="submit"></button>
+                    </form>
+                <a href="{% url 'login' %}" class="btn-primary-outline mr-2">Login</a>
+                <a href="{% url 'signup' %}" class="btn-primary">Sign Up</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto">
+        <section class="hero-section mt-8">
+            <h1 class="text-gray-300">Your Trusted Plagiarism Checker</h1>
+            <p class="text-gray-400">
+                Ensure the originality of your content with our advanced plagiarism detection system.
+                Upload documents or paste text to get instant, accurate results.
+            </p>
+            <a href="{% url 'detect' %}" class="btn btn-main">Get Started Now</a>
+        </section>
+
+        <section class="grid lg:grid-cols-3 gap-6">
+            <div class="content-card p-8 lg:col-span-1">
+                <h3 class="text-blue-200 font-bold mb-4">Why Choose Us?</h3>
+                <ul class="text-gray-300">
+                    <li><strong class="font-semibold">Accuracy:</strong> Advanced algorithms for precise detection.</li>
+                    <li><strong class="font-semibold">Speed:</strong> Get results in seconds, not minutes.</li>
+                    <li><strong class="font-semibold">Security:</strong> Your data is protected and private.</li>
+                    <li><strong class="font-semibold">Ease of Use:</strong> Simple interface for everyone.</li>
+                    <li><strong class="font-semibold">Comprehensive:</strong> Checks against vast databases.</li>
+                </ul>
+            </div>
+
+            <div class="content-card p-8 lg:col-span-2">
+                <h3 class="text-3xl font-bold mb-4">Types of Plagiarism</h3>
+                <ul class="text-gray-300">
+                    <li><strong class="font-semibold">Direct Plagiarism:</strong> Copying word-for-word without credit.</li>
+                    <li><strong class="font-semibold">Self-Plagiarism:</strong> Reusing your own old work without citing.</li>
+                    <li><strong class="font-semibold">Mosaic Plagiarism:</strong> Changing a few words but keeping the original structure.</li>
+                    <li><strong class="font-semibold">Accidental Plagiarism:</strong> Forgetting to cite sources unintentionally.</li>
+                    <li><strong class="font-semibold">Source-Based Plagiarism:</strong> Misrepresenting or fabricating sources.</li>
+                </ul>
+            </div>
+
+            <div class="content-card p-8 lg:col-span-2">
+                <h3 class="text-3xl font-bold mb-4">Consequences of Plagiarism</h3>
+                <p class="leading-relaxed mb-4">
+                    Plagiarism can result in academic penalties, loss of credibility, job termination, or even lawsuits. Always ensure your work is properly cited and original.
+                </p>
+                <p class="leading-relaxed">
+                    Understanding and avoiding plagiarism helps uphold integrity and trust in your academic or professional journey.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="p-4 mt-8 rounded-t-lg">
+        <div class="container mx-auto text-center text-sm">
+            &copy; 2025 Plagiarism Detection System. All rights reserved.
+        </div>
+    </footer>
+</body>
+</html>

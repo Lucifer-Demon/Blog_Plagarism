@@ -1,0 +1,242 @@
+{% extends "pc/base.html" %}
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        /* Dark Background Gradient - Reused for consistency */
+        body {
+            background: linear-gradient(135deg, #2c3e50, #4a69bd, #6a89cc); /* Deep blue/grey to lighter blue */
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: #ecf0f1; /* Light text color for the body background */
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Card Styling for Profile (Reusing signup-card's visual style) */
+        .profile-card {
+            border-radius: 15px;
+            background-color: rgba(44, 62, 80, 0.9); /* Dark blue/grey with slight transparency */
+            backdrop-filter: blur(8px); /* Increased blur for more separation */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle light border */
+            transform: translateY(0);
+            transition: transform 0.3s ease-in-out;
+            color: #ecf0f1; /* Light text color inside the card */
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
+        }
+
+        /* Styling for the Heading */
+        .card-title.text-primary {
+            color: #74b9ff !important; /* Lighter blue for heading */
+        }
+
+        /* General text color for card elements */
+        .card-text,
+        p,
+        .list-group-item {
+            color: #ecf0f1; /* Light gray for general text in the card */
+            background-color: transparent; /* Ensure list items are transparent */
+        }
+
+        .list-group-item {
+            border-color: rgba(255, 255, 255, 0.1); /* Subtle border for list items */
+        }
+
+        /* Profile picture styling */
+        .profile-pic-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%; /* Make it circular */
+            overflow: hidden;
+            border: 3px solid #74b9ff; /* Colorful border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Soft shadow */
+            margin-bottom: 20px;
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer; /* Indicate it's clickable/interactable */
+        }
+
+        .profile-pic-container:hover {
+            transform: scale(1.05); /* Slight zoom on hover */
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures image covers the area without distortion */
+        }
+
+        /* Button styling */
+        .btn-outline-danger {
+            color: #e74c3c;
+            border-color: #e74c3c;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #e74c3c;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline-secondary { /* Added for the Back to Home button */
+            color: #74b9ff;
+            border-color: #74b9ff;
+            transition: all 0.3s ease-in-out;
+            margin-top: 15px; /* Adjust spacing */
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #74b9ff;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Wrapper for the page background */
+        .profile-page-wrapper {
+            width: 100%;
+            min-height: 100vh; /* Ensure it takes full viewport height */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: row; /* Arrange items horizontally */
+            flex-wrap: wrap; /* Allow items to wrap to the next line on smaller screens */
+            justify-content: center; /* Center content horizontally */
+            align-items: flex-start; /* Align items to the start of the cross axis (top) */
+            gap: 20px; /* Space between cards */
+            padding: 20px; /* Add padding around the content */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        /* Ensure cards take up appropriate width in a row layout */
+        .profile-page-wrapper .profile-card {
+            flex: 1; /* Allow cards to grow and shrink */
+            min-width: 300px; /* Minimum width before wrapping */
+            max-width: 500px; /* Max width for individual cards */
+        }
+
+        /* Specific styling for the History card to make it larger */
+        .profile-page-wrapper .history-card {
+            flex: 2; /* Allow it to take up twice as much space as other flex items */
+            max-width: 700px; /* Allow it to grow larger than the default 500px */
+            min-width: 350px; /* Ensure it's not too small on smaller screens */
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .profile-page-wrapper {
+                flex-direction: column; /* Stack items vertically on small screens */
+                align-items: center; /* Center items horizontally when stacked */
+            }
+            .profile-page-wrapper .profile-card,
+            .profile-page-wrapper .history-card { /* Apply to both cards when stacked */
+                width: 100%; /* Full width on small screens */
+                max-width: 500px; /* Still respect max-width for consistency */
+            }
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+<div class="profile-page-wrapper">
+    <div class="card profile-card shadow-lg p-4">
+        <div class="card-body text-center">
+            {# Display Django messages #}
+            {% if messages %}
+                <ul class="messages list-unstyled mb-4">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }} text-center"{% endif %} style="color: yellow; font-weight: bold;">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h2 class="card-title mb-4 text-primary">
+                <i class="bi bi-person-circle me-2"></i> Your Profile
+            </h2>
+
+            {# Profile Picture Display and (Optional) Upload Field #}
+            <div class="d-flex justify-content-center mb-4">
+                <div class="profile-pic-container" onclick="document.getElementById('id_profile_picture').click();">
+                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'pc/images/user.png' %}{% endif %}" alt="Profile Picture" class="profile-pic">
+                </div>
+            </div>
+
+            {# This form is for updating the profile picture only. You'll need a view and form for it. #}
+            <form method="post" enctype="multipart/form-data" id="profile-picture-form">
+                {% csrf_token %}
+                {# Assuming your Django form (passed as 'pic_form' for example) has a field named 'profile_picture' #}
+                <input type="file" name="profile_picture" id="id_profile_picture" style="display: none;" onchange="this.form.submit();">
+                {# Display errors for profile picture if using a form #}
+                {% if pic_form and pic_form.profile_picture.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in pic_form.profile_picture.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </form>
+            <small class="text-muted mb-4 d-block"></small>
+
+
+            <div class="list-group list-group-flush mb-4">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Username:</strong>
+                    <span>{{ user.username }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Email:</strong>
+                    <span>{{ user.email|default:"No email provided" }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>First Name:</strong>
+                    <span>{{ user.first_name|default:"Not set" }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Last Name:</strong>
+                    <span>{{ user.last_name|default:"Not set" }}</span>
+                </div>
+            </div>
+
+            {# Back to Community Blog Button #}
+            <a href="{% url 'blog_list' %}" class="btn btn-outline-secondary mt-3 w-100">
+                <i class="bi bi-house-door me-2"></i> Back to Community Blog
+            </a>
+
+            {# This logout button is outside the picture upload form #}
+            <a href="{% url 'logout' %}" class="btn btn-outline-danger mt-3 w-100">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    {# HISTORY BOX #}
+<div class="card profile-card shadow-lg p-4 history-card">
+    <div class="card-body text-center">
+        <h2 class="card-title mb-4 text-primary">
+            <i class="bi bi-gear me-2"></i> History
+        </h2>
+
+        {% if history %}
+            <ul class="list-group list-group-flush text-start">
+                {% for item in history %}
+                    <li class="list-group-item">
+                        <strong>{{ item.checked_at|date:"M d, Y H:i" }}</strong><br>
+                        <em>{{ item.query_text|truncatechars:100 }}</em><br>
+                        <span class="badge bg-primary mt-1">Plagiarism: {{ item.result_percentage }}%</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No plagiarism checks yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+</div>
+{% endblock %}

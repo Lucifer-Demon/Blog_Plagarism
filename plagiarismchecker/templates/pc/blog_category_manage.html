@@ -1,0 +1,298 @@
+{% extends 'pc/base.html' %}
+{% block content %}
+<style>
+  body {
+    background:
+      linear-gradient(135deg, rgba(168, 218, 220, 0.8), rgba(69, 123, 157, 0.8)),
+      linear-gradient(45deg, #1d3557 25%, transparent 25%, transparent 75%, #1d3557 75%, #1d3557),
+      linear-gradient(-45deg, #457b9d 25%, transparent 25%, transparent 75%, #457b9d 75%, #457b9d);
+    background-size: cover, 40px 40px, 40px 40px;
+    background-attachment: fixed;
+    animation: moveBackground 60s linear infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  @keyframes moveBackground {
+    0% { background-position: 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 40px 40px, -40px 40px; }
+  }
+  
+  .category-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .category-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .category-title {
+    background: linear-gradient(135deg, #1d3557, #457b9d, #2a9d8f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 3em;
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+  
+  .category-subtitle {
+    color: #4a5568;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+  }
+  
+  .form-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .form-title {
+    color: #1d3557;
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-label {
+    display: block;
+    color: #1d3557;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+  }
+  
+  .form-control {
+    width: 100%;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px 18px;
+    font-size: 1.05em;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    font-family: inherit;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #2a9d8f;
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+    background: #fff;
+  }
+  
+  textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 15px 30px;
+    font-weight: 700;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #2a9d8f, #457b9d);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+  }
+  
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1d3557;
+    border: 2px solid #e2e8f0;
+  }
+  
+  .btn-secondary:hover {
+    background: #1d3557;
+    color: white;
+    border-color: #1d3557;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .categories-list {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .list-title {
+    color: #1d3557;
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .category-item {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #2a9d8f;
+    transition: all 0.3s ease;
+  }
+  
+  .category-item:hover {
+    background: #f1f5f9;
+    transform: translateX(5px);
+  }
+  
+  .category-name {
+    color: #1d3557;
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .category-description {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  
+  .category-meta {
+    color: #718096;
+    font-size: 0.9em;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #718096;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #4a5568;
+  }
+  
+  @media (max-width: 768px) {
+    .category-title {
+      font-size: 2.5em;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<div class="category-container">
+  <!-- Header Section -->
+  <div class="category-header">
+    <h1 class="category-title">🏷️ Manage Categories</h1>
+    <p class="category-subtitle">Create and manage blog post categories</p>
+    
+    <!-- Action Buttons -->
+    <div style="margin-top: 20px;">
+      <a href="{% url 'blog_admin' %}" class="btn btn-secondary">⚙️ Back to Admin</a>
+      <a href="{% url 'blog_list' %}" class="btn btn-secondary">📝 View Blog</a>
+    </div>
+  </div>
+
+  <!-- Add Category Form -->
+  <div class="form-card">
+    <h2 class="form-title">➕ Add New Category</h2>
+    
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label class="form-label">🏷️ Category Name</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+          <div style="color: #e53e3e; font-size: 0.9em; margin-top: 5px;">{{ form.name.errors.0 }}</div>
+        {% endif %}
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">📝 Description</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+          <div style="color: #e53e3e; font-size: 0.9em; margin-top: 5px;">{{ form.description.errors.0 }}</div>
+        {% endif %}
+        <div style="color: #718096; font-size: 0.9em; margin-top: 5px;">Optional description for this category</div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Create Category</button>
+        <button type="reset" class="btn btn-secondary">🔄 Reset</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Categories List -->
+  <div class="categories-list">
+    <h2 class="list-title">📋 Existing Categories</h2>
+    
+    {% if categories %}
+      {% for category in categories %}
+        <div class="category-item">
+          <div class="category-name">{{ category.name }}</div>
+          {% if category.description %}
+            <div class="category-description">{{ category.description }}</div>
+          {% endif %}
+          <div class="category-meta">
+            📅 Created: {{ category.created_at|date:"M d, Y" }}
+            {% if category.blogpost_set.count > 0 %}
+              • 📝 {{ category.blogpost_set.count }} post{{ category.blogpost_set.count|pluralize }}
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <h3>No categories yet</h3>
+        <p>Create your first category to organize blog posts!</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

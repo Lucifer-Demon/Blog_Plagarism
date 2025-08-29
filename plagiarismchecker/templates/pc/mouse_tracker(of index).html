@@ -1,0 +1,503 @@
+{% extends "pc/base.html" %}
+{% load static %}
+
+{% block title %}Home - Plagiarism Checker{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        /* General Body Styles */
+        body {
+            /* Enhanced background with multiple layers and subtle animation */
+            background: 
+                linear-gradient(135deg, rgba(168, 218, 220, 0.8), rgba(69, 123, 157, 0.8)), /* Base gradient, slightly transparent */
+                linear-gradient(45deg, #1d3557 25%, transparent 25%, transparent 75%, #1d3557 75%, #1d3557), /* Darker diagonal lines */
+                linear-gradient(-45deg, #457b9d 25%, transparent 25%, transparent 75%, #457b9d 75%, #457b9d); /* Lighter diagonal lines */
+            background-size: 
+                cover, /* Cover the entire area with the main gradient */
+                40px 40px, /* Size of the diagonal line pattern */
+                40px 40px; /* Size of the second diagonal line pattern */
+            background-position: 
+                0 0, /* Position for the main gradient */
+                0 0, /* Initial position for the first pattern */
+                0 0; /* Initial position for the second pattern */
+            background-attachment: fixed; /* Keep background fixed while scrolling */
+            animation: moveBackground 60s linear infinite; /* Slow, continuous movement */
+            
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh; /* Ensure the gradient covers the full viewport height */
+            display: flex; /* Use flex to push content to the center */
+            flex-direction: column; /* Stack content vertically */
+            align-items: center; /* Center horizontally */
+            justify-content: center; /* Center vertically if content is short */
+        }
+
+        @keyframes moveBackground {
+            from {
+                background-position: 0 0, 0 0, 0 0;
+            }
+            to {
+                background-position: 0 0, 4000px 4000px, -4000px 4000px; /* Shift patterns over a large distance */
+            }
+        }
+
+        /* Animated Title Section */
+        .animated-title-container {
+            width: 100%;
+            /* Adjusted background color to complement the new body gradient */
+            background-color: #1d3557; /* Darker blue from the gradient for contrast */
+            color: #fff;
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* Slightly stronger shadow */
+            margin-bottom: 50px;
+            overflow: hidden;
+        }
+
+        .animated-title {
+            font-size: 3em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            display: inline-block;
+            overflow: hidden;
+            animation: typing 3s steps(30, end) forwards, blink-caret .75s step-end infinite;
+            border-right: .15em solid #fca311; /* Changed cursor color for better contrast */
+            width: 0;
+        }
+
+        /* Typing Animation */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        /* Blinking Caret Animation */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #fca311 } /* Matched with animated-title border */
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto; /* Keep auto margins for horizontal centering */
+            background-color: #ffffff; /* Keep main content area white for readability */
+            border-radius: 12px; /* Slightly more rounded corners for a modern feel */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* More prominent shadow */
+            text-align: center;
+            margin-top: 20px; /* Add some space from the top */
+            margin-bottom: 50px; /* Add space at the bottom */
+            flex-shrink: 0; /* Prevent main content from shrinking */
+            width: 90%; /* Adjust width for better responsiveness */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .text-input-area {
+            width: 100%;
+            min-height: 300px;
+            border: 1px solid #c0d0e0; /* Softer border color */
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.1em;
+            resize: vertical;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            text-align: left;
+            line-height: 1.5;
+            transition: border-color 0.3s ease; /* Smooth transition on focus */
+        }
+        .text-input-area:focus {
+            border-color: #457b9d; /* Highlight on focus */
+            outline: none; /* Remove default outline */
+        }
+        .text-input-area::placeholder {
+            color: #99aab5; /* Softer placeholder color */
+            text-align: center;
+            line-height: 250px;
+        }
+        .bottom-buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        /* Style for the "Choose File" button (label) */
+        .bottom-buttons .btn-choose-file {
+            background-color: #2a9d8f; /* A more appealing green/teal */
+            color: #fff;
+            padding: 12px 25px; /* Slightly larger padding */
+            border-radius: 8px; /* Match main content border-radius */
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em; /* Slightly larger font */
+            font-weight: 500;
+            max-width: 400px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Add transition for hover */
+        }
+        .bottom-buttons .btn-choose-file i {
+            margin-right: 10px; /* Slightly more space for icon */
+        }
+        .bottom-buttons .btn-choose-file:hover {
+            background-color: #264653; /* Darker teal on hover */
+            transform: translateY(-2px); /* Subtle lift effect */
+        }
+
+        /* Style for the delete icon button */
+        .bottom-buttons .delete-icon {
+            background-color: transparent;
+            border: none;
+            color: #e63946; /* More prominent red */
+            font-size: 1.6em; /* Slightly larger icon */
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .bottom-buttons .delete-icon:hover {
+            color: #a8202b; /* Darker red on hover */
+            transform: scale(1.1); /* Subtle grow effect */
+        }
+
+        /* Style for the "Check Plagiarism" button */
+        .bottom-buttons .btn-primary {
+            background-color: #fca311; /* Vibrant orange/yellow */
+            color: #1d3557; /* Dark text for contrast */
+            padding: 12px 25px; /* Slightly larger padding */
+            border-radius: 8px; /* Match main content border-radius */
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em; /* Slightly larger font */
+            font-weight: 500;
+            max-width: 400px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .bottom-buttons .btn-primary:hover {
+            background-color: #e63946; /* Red-orange on hover */
+            color: #fff; /* White text on hover */
+            transform: translateY(-2px); /* Subtle lift effect */
+        }
+
+        /* Style for selected file name display */
+        #selected-file-name {
+            margin-top: 8px; /* Increased margin for better spacing */
+            font-size: 1em; /* Slightly larger font */
+            color: #3b5066; /* Darker, more legible gray */
+            font-style: italic;
+            text-align: center;
+            width: 100%;
+        }
+
+
+        /* Results Section Styling (if any) */
+        .alert {
+            margin-top: 30px; /* More space */
+            padding: 20px; /* More padding */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
+        }
+        .alert-info {
+            background-color: #d1ecf1; /* Lighter blue */
+            border-color: #bee5eb;
+            color: #0c5460; /* Darker text */
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .alert p {
+            margin-bottom: 5px; /* Space between lines */
+            font-size: 1.05em;
+        }
+        .alert strong {
+            color: #1d3557; /* Stronger color for bold text */
+        }
+
+
+        /* General button styling for download PDF */
+        .btn-warning {
+            background-color: #fca311; /* Vibrant orange */
+            border-color: #fca311;
+            color: #1d3557; /* Dark text */
+            padding: 12px 25px;
+            border-radius: 8px;
+            margin-top: 20px; /* More space */
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-warning:hover {
+            background-color: #e63946; /* Red-orange on hover */
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Compare Section Styling */
+        hr {
+            margin-top: 50px; /* More space */
+            margin-bottom: 50px;
+            border: 0;
+            border-top: 1px solid rgba(0,0,0,.15); /* Slightly darker separator */
+        }
+        .text-center h5 {
+            margin-bottom: 20px; /* More space below heading */
+            color: #1d3557; /* Dark blue heading */
+            font-size: 1.5em; /* Larger heading */
+        }
+        .btn-outline-secondary {
+            border: 2px solid #457b9d; /* Thicker, more vibrant border */
+            color: #457b9d; /* Match border color */
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #457b9d; /* Solid fill on hover */
+            color: #fff;
+            border-color: #457b9d;
+            transform: translateY(-2px);
+        }
+
+        /* Styles for the snake tracker */
+        .snake-segment {
+            position: fixed;
+            width: 20px; /* Size of each segment */
+            height: 20px;
+            background-color: #e63946; /* Red color for the snake */
+            border-radius: 50%; /* Make it circular */
+            transform: translate(-50%, -50%); /* Center the segment on its coordinates */
+            pointer-events: none; /* Allow mouse events to pass through */
+            z-index: 9999; /* Ensure it stays on top */
+            transition: left 0.1s linear, top 0.1s linear; /* Smoother movement */
+        }
+        .snake-segment:nth-child(even) {
+            background-color: #fca311; /* Alternate color for segments */
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .animated-title-container {
+                padding: 20px 0;
+                margin-bottom: 30px;
+            }
+            .animated-title {
+                font-size: 2em;
+                letter-spacing: 1px;
+            }
+            .main-content {
+                margin: 0 15px;
+                padding: 20px;
+            }
+            .bottom-buttons {
+                flex-wrap: wrap;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .bottom-buttons .btn-choose-file,
+            .bottom-buttons .delete-icon,
+            .bottom-buttons .btn-primary {
+                width: calc(100% - 10px);
+                margin-bottom: 10px;
+                max-width: none;
+            }
+            #selected-file-name {
+                margin-bottom: 10px;
+            }
+            .text-input-area::placeholder {
+                line-height: normal;
+                padding-top: 50px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="animated-title-container">
+    <div class="animated-title">Plagiarism Detection System</div>
+</div>
+
+<div class="main-content">
+    <form method="POST" action="{% url 'index' %}" enctype="multipart/form-data" id="plagiarism-form">
+        {% csrf_token %}
+        <textarea id="q" name="q" class="text-input-area" placeholder="Please enter your text and press Check Plagiarism">{{ q_text_input|default:"" }}</textarea>
+
+        <div class="bottom-buttons">
+            <div>
+                <label for="docfile" class="btn-choose-file">
+                    <i class="fas fa-cloud-upload-alt"></i> Choose File
+                    <input type="file" id="docfile" name="docfile" accept=".txt,.docx,.pdf" hidden>
+                </label>
+                <div id="selected-file-name">No file chosen</div>
+            </div>
+            <button type="button" class="delete-icon" id="clear-text-button">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <button type="submit" class="btn btn-primary" id="check-text-button">
+                Check Plagiarism
+            </button>
+        </div>
+        {# HIDDEN INPUT FOR ACTION TYPE - NO CHANGE HERE #}
+        <input type="hidden" name="action" id="submit_action" value="check_text">
+    </form>
+
+    {% if percent is not None %}
+    <div class="alert alert-info text-center">
+        <p>Similarity with dataset: <strong>{{ percent }}%</strong></p>
+        {% if total_words and plag_words is not None %}
+        <p>Total Words: <strong>{{ total_words }}</strong></p>
+        <p>Plagiarized Words: <strong>{{ plag_words }}</strong></p>
+        {% endif %}
+    </div>
+
+    <form method="POST" action="{% url 'index' %}" class="mt-2">
+        {% csrf_token %}
+        <textarea name="q" hidden>{{ q_text_input|default:"" }}</textarea>
+        <input type="hidden" name="action" value="{{ last_action|default:"check_text" }}">
+        <button type="submit" name="download_pdf" value="1" class="btn btn-warning w-100">
+            Download PDF Report
+        </button>
+    </form>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger text-center mt-4">{{ error }}</div>
+    {% endif %}
+
+    <hr>
+    <div class="text-center">
+        <h5>Want to Compare Two Texts or Files?</h5>
+        <a href="{% url 'filecompare' %}" class="btn btn-outline-secondary mt-2">
+            Compare Two Texts or Files
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textArea = document.getElementById('q');
+        const docFileInput = document.getElementById('docfile');
+        const plagiarismForm = document.getElementById('plagiarism-form');
+        const clearTextButton = document.getElementById('clear-text-button');
+        const checkTextButton = document.getElementById('check-text-button');
+        const animatedTitle = document.querySelector('.animated-title');
+        const submitActionHiddenInput = document.getElementById('submit_action');
+        const selectedFileNameDisplay = document.getElementById('selected-file-name');
+
+        const typingDurationMs = 3 * 1000;
+
+        setTimeout(() => {
+            animatedTitle.style.borderRight = 'none';
+        }, typingDurationMs);
+
+        docFileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                selectedFileNameDisplay.textContent = `File chosen: ${this.files[0].name}`;
+                textArea.value = ''; // Clear textarea if a file is uploaded
+            } else {
+                selectedFileNameDisplay.textContent = 'No file chosen';
+            }
+        });
+
+        // Use 'submit' event listener on the form itself for overall control
+        plagiarismForm.addEventListener('submit', function(event) {
+            if (docFileInput.files.length > 0) {
+                submitActionHiddenInput.value = 'check_file';
+            } else if (textArea.value.trim() !== '') {
+                submitActionHiddenInput.value = 'check_text';
+            } else {
+                event.preventDefault(); // Prevent form submission if no input
+                alert('Please enter text or choose a file to check for plagiarism.');
+                return;
+            }
+        });
+
+        clearTextButton.addEventListener('click', function() {
+            textArea.value = '';
+            docFileInput.value = '';
+            selectedFileNameDisplay.textContent = 'No file chosen';
+            // When clearing, ensure the default action is 'check_text' for future submissions
+            submitActionHiddenInput.value = 'check_text';
+        });
+
+        // --- Snake Tracker Implementation ---
+        const numSegments = 15; // Number of snake segments
+        const segments = [];
+        let mouseX = 0;
+        let mouseY = 0;
+
+        // Create snake segments and append to body
+        for (let i = 0; i < numSegments; i++) {
+            const segment = document.createElement('div');
+            segment.classList.add('snake-segment');
+            document.body.appendChild(segment);
+            segments.push(segment);
+        }
+
+        // Update mouse coordinates on mousemove
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Animation loop for the snake
+        function animateSnake() {
+            // First segment follows the mouse directly
+            segments[0].style.left = `${mouseX}px`;
+            segments[0].style.top = `${mouseY}px`;
+
+            // Subsequent segments follow the previous one
+            for (let i = 1; i < numSegments; i++) {
+                const prevSegment = segments[i - 1];
+                const currentSegment = segments[i];
+
+                // Get the center of the previous segment for accurate tracking
+                const prevRect = prevSegment.getBoundingClientRect();
+                const prevX = prevRect.left + prevRect.width / 2;
+                const prevY = prevRect.top + prevRect.height / 2;
+
+                // Easing effect: move current segment towards the previous segment's position
+                const dx = prevX - (parseFloat(currentSegment.style.left) || 0);
+                const dy = prevY - (parseFloat(currentSegment.style.top) || 0);
+                
+                // Adjust this factor for faster/slower follow (smaller for smoother)
+                const easingFactor = 0.15; 
+
+                currentSegment.style.left = `${(parseFloat(currentSegment.style.left) || 0) + dx * easingFactor}px`;
+                currentSegment.style.top = `${(parseFloat(currentSegment.style.top) || 0) + dy * easingFactor}px`;
+            }
+
+            requestAnimationFrame(animateSnake);
+        }
+
+        // Start the animation
+        animateSnake();
+    });
+</script>
+{% endblock %}

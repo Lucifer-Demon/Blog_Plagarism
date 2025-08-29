@@ -1,0 +1,140 @@
+
+{% extends "pc/base.html" %} 
+{% load static %}
+
+{% block title %}Add New Reference Document - Plagiarism Checker{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <style>
+        /* Basic styling for the form to make it look decent */
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            text-align: left;
+        }
+        .form-container h2 {
+            text-align: center;
+            color: #1d3557;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #457b9d;
+        }
+        .form-container input[type="text"],
+        .form-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #c0d0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+            transition: border-color 0.3s ease;
+        }
+        .form-container input[type="text"]:focus,
+        .form-container textarea:focus {
+            border-color: #2a9d8f;
+            outline: none;
+        }
+        .form-container textarea {
+            min-height: 200px; /* Make textarea larger */
+            resize: vertical;
+        }
+        .form-container button[type="submit"] {
+            background-color: #2a9d8f; /* Green/teal color */
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            display: block; /* Make button full width */
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .form-container button[type="submit"]:hover {
+            background-color: #264653; /* Darker teal on hover */
+            transform: translateY(-2px);
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .back-button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn-outline-secondary {
+            border: 2px solid #457b9d; /* Thicker, more vibrant border */
+            color: #457b9d; /* Match border color */
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #457b9d; /* Solid fill on hover */
+            color: #fff;
+            border-color: #457b9d;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Add New Reference Document</h2>
+
+    {# Display Django messages (success/error etc.) #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %} {# Always include this for security in Django forms #}
+
+        {# Render the form fields. .as_p renders each field in a paragraph #}
+        {{ form.as_p }}
+
+        <button type="submit">Add Document</button>
+    </form>
+
+    <div class="back-button-container">
+        <a href="{% url 'webpage' %}" class="btn btn-outline-secondary">Back to Home</a>
+    </div>
+</div>
+{% endblock %}

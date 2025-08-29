@@ -1,0 +1,137 @@
+{% extends "pc/base.html" %}
+
+{% block head %} 
+    {{ block.super }} {# This keeps content from the parent 'head' block, like Bootstrap CSS #}
+    <style>
+        /* Dark Background Gradient */
+        body {
+            background: linear-gradient(135deg, #2c3e50, #4a69bd, #6a89cc); /* Deep blue/grey to lighter blue */
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: #ecf0f1; /* Light text color for the body background */
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Card Styling for Login Form (Colored Form) */
+        .login-card {
+            border-radius: 15px;
+            background-color: rgba(44, 62, 80, 0.9); /* Dark blue/grey with slight transparency */
+            backdrop-filter: blur(8px); /* Increased blur for more separation */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle light border */
+            transform: translateY(0);
+            transition: transform 0.3s ease-in-out;
+            color: #ecf0f1; /* Light text color inside the card */
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
+        }
+
+        /* Interactive Text Boxes */
+        .interactive-input {
+            background-color: rgba(255, 255, 255, 0.05); /* Very slight white tint */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Light border */
+            color: #ecf0f1; /* Light text in input */
+            transition: all 0.3s ease-in-out;
+            box-shadow: none;
+        }
+
+        .interactive-input::placeholder { /* Style placeholder text */
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .interactive-input:focus {
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter on focus */
+            border-color: #74b9ff; /* Brighter blue border on focus */
+            box-shadow: 0 0 0 0.25rem rgba(116, 185, 255, 0.4); /* Glowing effect */
+            transform: scale(1.01);
+        }
+
+        /* Customizing the Login button */
+        .btn-primary {
+            background-color: #3498db; /* A vibrant blue */
+            border-color: #3498db;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+            border-color: #2980b9;
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Styling for the Welcome Back heading */
+        .card-title.text-center.mb-4 {
+            color: #74b9ff !important; /* Lighter blue for heading */
+        }
+
+        /* Styling for the Sign up link */
+        .text-decoration-none {
+            color: #74b9ff !important; /* Lighter blue for the link */
+            transition: color 0.3s ease-in-out;
+        }
+
+        .text-decoration-none:hover {
+            color: #a29bfe !important; /* A slightly different light color on hover */
+        }
+
+        /* General text color for labels and paragraphs in the card */
+        .form-label,
+        .card-text,
+        p {
+            color: #ecf0f1; /* Light gray for general text in the card */
+        }
+
+        /* Alert messages */
+        .alert-info, .alert-success, .alert-warning, .alert-danger {
+            color: #2c3e50; /* Darker text for readability on light alert backgrounds */
+        }
+
+        .login-page-wrapper {
+            width: 100%;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+<div class="login-page-wrapper d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card login-card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+        <h2 class="card-title text-center mb-4">Welcome Back!</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_username" class="form-label">Username</label>
+                <input type="text" name="username" autofocus required class="form-control form-control-lg interactive-input" id="id_username" placeholder="Enter your username">
+            </div>
+            <div class="mb-3">
+                <label for="id_password" class="form-label">Password</label>
+                <input type="password" name="password" required class="form-control form-control-lg interactive-input" id="id_password" placeholder="Enter your password">
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                <a href="{% url 'public_blog_list' %}" class="btn btn-secondary btn-lg mt-3" style="background-color: #6c757d; border-color: #6c757d; color: #fff; text-decoration: none;">Continue without logging in</a>
+            </div>
+        </form>
+        <p class="text-center mt-4">
+            Don't have an account? <a href="{% url 'signup' %}" class="text-decoration-none">Sign up here</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}

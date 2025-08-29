@@ -1,0 +1,722 @@
+{% extends 'pc/base.html' %}
+{% block content %}
+<style>
+  body {
+    background:
+      linear-gradient(135deg, rgba(168, 218, 220, 0.8), rgba(69, 123, 157, 0.8)),
+      linear-gradient(45deg, #1d3557 25%, transparent 25%, transparent 75%, #1d3557 75%, #1d3557),
+      linear-gradient(-45deg, #457b9d 25%, transparent 25%, transparent 75%, #457b9d 75%, #457b9d);
+    background-size: cover, 40px 40px, 40px 40px;
+    background-attachment: fixed;
+    animation: moveBackground 60s linear infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  @keyframes moveBackground {
+    0% { background-position: 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 40px 40px, -40px 40px; }
+  }
+  
+  .blog-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .blog-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 30px;
+  }
+  
+  .blog-header {
+    padding: 40px;
+    text-align: center;
+  }
+  
+  .blog-title {
+    background: linear-gradient(135deg, #1d3557, #457b9d, #2a9d8f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.5em;
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  
+  .blog-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    color: #718096;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .status-draft {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+  }
+  
+  .status-pending {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+  }
+  
+  .status-published {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+  }
+  
+  .blog-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2a9d8f;
+    font-weight: 600;
+  }
+  
+  .blog-tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .tag {
+    background: linear-gradient(135deg, rgba(42, 157, 143, 0.1), rgba(69, 123, 157, 0.1));
+    color: #2a9d8f;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+  }
+  
+  .blog-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+  }
+  
+  .blog-content {
+    padding: 40px;
+    line-height: 1.8;
+    font-size: 1.1em;
+    color: #2d3748;
+  }
+  
+  .blog-content p {
+    margin-bottom: 20px;
+  }
+  
+  .blog-content h2, .blog-content h3 {
+    color: #1d3557;
+    margin-top: 30px;
+    margin-bottom: 15px;
+  }
+  
+  .blog-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(42, 157, 143, 0.05), rgba(69, 123, 157, 0.05));
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .stat {
+    text-align: center;
+    color: #4a5568;
+  }
+  
+  .stat-number {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #2a9d8f;
+  }
+  
+  .stat-label {
+    font-size: 0.9em;
+    color: #718096;
+  }
+  
+  .comments-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .comments-title {
+    color: #1d3557;
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .comment-form {
+    margin-bottom: 40px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    display: block;
+    color: #1d3557;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+  }
+  
+  .form-control {
+    width: 100%;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px 18px;
+    font-size: 1.05em;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    font-family: inherit;
+    resize: vertical;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #2a9d8f;
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+    background: #fff;
+  }
+  
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 700;
+    font-size: 1.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #2a9d8f, #457b9d);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+  }
+  
+  .comments-list {
+    margin-top: 30px;
+  }
+  
+  .comment {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2a9d8f;
+  }
+  
+  .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .comment-author {
+    color: #2a9d8f;
+    font-weight: 600;
+    font-size: 1.1em;
+  }
+  
+  .comment-date {
+    color: #718096;
+    font-size: 0.9em;
+  }
+  
+  .comment-content {
+    color: #2d3748;
+    line-height: 1.6;
+  }
+  
+  .empty-comments {
+    text-align: center;
+    color: #718096;
+    padding: 40px;
+    font-style: italic;
+  }
+  
+  .navigation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1d3557;
+    border: 2px solid #e2e8f0;
+  }
+  
+  .btn-secondary:hover {
+    background: #1d3557;
+    color: white;
+    border-color: #1d3557;
+  }
+  
+  .plagiarism-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 30px;
+  }
+  
+  .plagiarism-title {
+    color: #1d3557;
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .plagiarism-form {
+    margin-bottom: 30px;
+  }
+  
+  .algorithm-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .algorithm-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+  }
+  
+  .algorithm-option:hover {
+    border-color: #2a9d8f;
+    background: rgba(42, 157, 143, 0.05);
+  }
+  
+  .algorithm-option input[type="radio"] {
+    margin: 0;
+  }
+  
+  .algorithm-option input[type="radio"]:checked + label {
+    color: #2a9d8f;
+    font-weight: 600;
+  }
+  
+  .plagiarism-results {
+    margin-top: 30px;
+  }
+  
+  .result-item {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #2a9d8f;
+    transition: all 0.3s ease;
+  }
+  
+  .result-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .result-title {
+    color: #1d3557;
+    font-weight: 600;
+    font-size: 1.1em;
+  }
+  
+  .similarity-score {
+    background: linear-gradient(135deg, #2a9d8f, #457b9d);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9em;
+  }
+  
+  .result-meta {
+    color: #718096;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+  }
+  
+  .result-excerpt {
+    color: #2d3748;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  
+  .no-results {
+    text-align: center;
+    color: #718096;
+    padding: 40px;
+    font-style: italic;
+  }
+  
+  .loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: #2a9d8f;
+  }
+  
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #2a9d8f;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @media (max-width: 768px) {
+    .blog-title {
+      font-size: 2em;
+    }
+    
+    .blog-meta {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .blog-stats {
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .navigation-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<div class="blog-container">
+  <!-- Blog Post -->
+  <article class="blog-card">
+    {% if post.featured_image %}
+      <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="blog-image">
+    {% endif %}
+    
+       <div class="blog-header">
+     {% if not is_public_view %}
+       <!-- User Info and Navigation Bar -->
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px;">
+         <div style="display: flex; align-items: center; gap: 15px;">
+           <div style="display: flex; align-items: center; gap: 8px; color: #2a9d8f; font-weight: 600;">
+             👤 Welcome, {{ user.username }}!
+           </div>
+         </div>
+         <div style="display: flex; gap: 10px;">
+           <a href="{% url 'profile' %}" class="btn" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); padding: 8px 16px; font-size: 0.9em; color: white; text-decoration: none; border-radius: 8px;">
+             👤 Profile
+           </a>
+           <a href="{% url 'logout' %}" class="btn" style="background: linear-gradient(135deg, #fd79a8, #e84393); padding: 8px 16px; font-size: 0.9em; color: white; text-decoration: none; border-radius: 8px;">
+             🚪 Logout
+           </a>
+         </div>
+       </div>
+     {% endif %}
+     
+     <h1 class="blog-title">{{ post.title }}</h1>
+      
+      <div class="blog-meta">
+        <div class="blog-author">
+          👤 {{ post.author.username }}
+        </div>
+        <div>
+          📅 {{ post.published_at|date:"F d, Y" }}
+        </div>
+        <div>
+          ⏰ {{ post.published_at|date:"H:i" }}
+        </div>
+        <span class="status-badge status-{{ post.status }}">
+          {{ post.status|title }}
+        </span>
+      </div>
+      
+      {% if post.tags %}
+        <div class="blog-tags">
+          {% for tag in post.get_tags_list %}
+            <span class="tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="blog-content">
+      {% if post.excerpt %}
+        <div style="background: linear-gradient(135deg, rgba(42, 157, 143, 0.1), rgba(69, 123, 157, 0.1)); padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #2a9d8f;">
+          <p style="font-style: italic; color: #1d3557; margin: 0; font-weight: 600;">{{ post.excerpt }}</p>
+        </div>
+      {% endif %}
+      
+      {{ post.content|linebreaks }}
+    </div>
+    
+    <div class="blog-stats">
+      <div class="stat">
+        <div class="stat-number">{{ post.views }}</div>
+        <div class="stat-label">Views</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">{{ comments.count }}</div>
+        <div class="stat-label">Comments</div>
+      </div>
+      {% if post.category %}
+        <div class="stat">
+          <div class="stat-number">{{ post.category.name }}</div>
+          <div class="stat-label">Category</div>
+        </div>
+      {% endif %}
+    </div>
+  </article>
+
+  <!-- Comments Section -->
+  <div class="comments-section">
+    <h2 class="comments-title">💬 Comments ({{ comments.count }})</h2>
+    
+
+    {% if not is_public_view %}
+
+      <!-- Comment Form -->
+      <form method="POST" class="comment-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_comment">
+        <div class="form-group">
+          <label class="form-label">Add a Comment</label>
+          {{ comment_form.content }}
+        </div>
+        <button type="submit" class="btn btn-primary">💬 Post Comment</button>
+      </form>
+    {% else %}
+      <div style="background: #f8d7da; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #f5c6cb;">
+        <strong>Info:</strong> Comment form hidden because this is a public view.
+      </div>
+    {% endif %}
+    
+    <!-- Comments List -->
+    <div class="comments-list">
+
+      {% if comments %}
+        {% for comment in comments %}
+          <div class="comment">
+            <div class="comment-header">
+              <div class="comment-author">👤 {{ comment.author.username }}</div>
+              <div class="comment-date">📅 {{ comment.created_at|date:"M d, Y H:i" }}</div>
+            </div>
+            <div class="comment-content">
+              {{ comment.content|linebreaks }}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-comments">
+          <h3>No comments yet</h3>
+          <p>Be the first to share your thoughts on this post!</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if not is_public_view %}
+  <!-- Plagiarism Detection Section -->
+  <div class="plagiarism-section">
+    <h2 class="plagiarism-title">🔍 Plagiarism Detection</h2>
+    <p style="text-align: center; color: #4a5568; margin-bottom: 30px;">
+      Compare this post against other published blog posts to check for similarities
+    </p>
+    
+    <form method="POST" class="plagiarism-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="check_plagiarism">
+      
+      <div class="algorithm-selector">
+        <div class="algorithm-option">
+          <input type="radio" id="cosine" name="algorithm" value="cosine" checked>
+          <label for="cosine">🔢 Cosine Similarity (TF-IDF)</label>
+        </div>
+        <div class="algorithm-option">
+          <input type="radio" id="containment" name="algorithm" value="containment">
+          <label for="containment">📊 Containment Similarity</label>
+        </div>
+      </div>
+      
+      <div style="text-align: center;">
+        <button type="submit" class="btn btn-primary">🔍 Check for Similarities</button>
+      </div>
+    </form>
+    
+    {% if plagiarism_results is not None %}
+      <div class="plagiarism-results">
+        <h3 style="color: #1d3557; margin-bottom: 20px; text-align: center;">
+          Similarity Results ({{ total_posts_checked }} posts checked)
+        </h3>
+        
+        {% if plagiarism_results %}
+          {% for result in plagiarism_results %}
+            <div class="result-item">
+              <div class="result-header">
+                <div class="result-title">
+                  <a href="{% url 'blog_detail' result.post.slug %}" style="text-decoration: none; color: inherit;">
+                    {{ result.post.title }}
+                  </a>
+                </div>
+                <div class="similarity-score">
+                  {{ result.similarity_percentage }}% Similar
+                </div>
+              </div>
+              <div class="result-meta">
+                👤 {{ result.post.author.username }} • 
+                📅 {{ result.post.published_at|date:"M d, Y" }} • 
+                🔧 {{ result.algorithm_used|title }}
+              </div>
+              <div class="result-excerpt">
+                {{ result.post.content|truncatewords:30 }}
+              </div>
+              
+              {% if result.matching_segments %}
+                <div class="matching-segments" style="margin-top: 15px; padding: 15px; background-color: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+                  <h6 style="color: #856404; margin-bottom: 10px;">
+                    <i class="fas fa-search"></i> Matching Text Segments:
+                  </h6>
+                  {% for segment in result.matching_segments %}
+                    <div class="segment-comparison" style="margin-bottom: 15px; padding: 10px; background-color: white; border-radius: 6px; border: 1px solid #e0e0e0;">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div style="margin-bottom: 8px;">
+                            <strong style="color: #dc3545;">Current Post:</strong>
+                          </div>
+                          <div style="background-color: #ffebee; padding: 8px; border-radius: 4px; font-family: monospace; font-size: 0.85em; border-left: 3px solid #dc3545;">
+                            "{{ segment.user_text }}"
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div style="margin-bottom: 8px;">
+                            <strong style="color: #007bff;">Similar Post:</strong>
+                          </div>
+                          <div style="background-color: #e3f2fd; padding: 8px; border-radius: 4px; font-family: monospace; font-size: 0.85em; border-left: 3px solid #007bff;">
+                            "{{ segment.source_text }}"
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-results">
+            <h3>✅ No significant similarities found</h3>
+            <p>This post appears to be original content! No plagiarism detected.</p>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if auto_similar_results %}
+  <div class="plagiarism-section">
+    <h2 class="plagiarism-title">🔎 Similar Blog Posts</h2>
+    <p style="text-align: center; color: #4a5568; margin-bottom: 30px;">
+      Posts with content similar to this one (automatically detected)
+    </p>
+    <div class="plagiarism-results">
+      {% for res in auto_similar_results %}
+        <div class="result-item">
+          <div class="result-header">
+            <a class="result-title" href="{% if is_public_view %}{% url 'public_blog_detail' res.post.slug %}{% else %}{% url 'blog_detail' res.post.slug %}{% endif %}" style="text-decoration: none; color: inherit;">
+              {{ res.post.title }}
+            </a>
+            <span class="similarity-score">{{ res.similarity_percentage }}% Similar</span>
+          </div>
+          <div class="result-meta">👤 {{ res.post.author.username }} • 📅 {{ res.post.published_at|date:"M d, Y" }}</div>
+          <div class="result-excerpt">{{ res.post.content|truncatewords:35 }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Navigation -->
+  <div class="navigation-buttons">
+    <a href="{% if is_public_view %}{% url 'public_blog_list' %}{% else %}{% url 'blog_list' %}{% endif %}" class="btn btn-secondary">📝 Back to Blog</a>
+    {% if not is_public_view %}
+      {% if user == post.author or user.is_staff %}
+        <a href="{% url 'blog_edit' post.slug %}" class="btn btn-secondary">✏️ Edit Post</a>
+      {% endif %}
+      {% if user.is_staff %}
+        <a href="{% url 'blog_admin' %}" class="btn btn-secondary">⚙️ Admin Panel</a>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

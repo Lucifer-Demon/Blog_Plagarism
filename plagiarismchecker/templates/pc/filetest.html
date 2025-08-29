@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload Test</title>
+</head>
+<body>
+    <h1>Upload File to Compare</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="docfile" required>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
